@@ -1,0 +1,6 @@
+en:
+  activerecord:
+    attributes:
+      demando/questionnaire:
+        ecodistrict_case_id: "Ecodistrict case ID"
+        ecodistrict_variant_id: "Ecodistrict variant ID"

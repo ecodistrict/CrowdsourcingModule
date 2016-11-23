@@ -1,0 +1,52 @@
+<%= bootstrap_form_for([:admin, @questionnaire], html: {id: 'questionnaire-form'}) do |f| %>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="panel panel-primary">
+          <div class="panel-heading">Questionnaire locales</div>
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-md-6">
+                <%= label_tag 'locales', t('demando.admin.questionnaires.add_locale_label') %>
+                <div class="input-group">
+                  <%= select_tag 'locales', options_from_collection_for_select(Demando::Locale.all, :id, :label_and_code), class: 'form-control' %>
+                  <span class="input-group-btn">
+                  <%= link_to_add_association t('demando.admin.questionnaires.add_locale_button'), f, :questionnaire_translations, class: 'btn btn-success', 'data-association-insertion-node' => '#questionnaire-translations', 'data-association-insertion-method' => 'append' %>
+                </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%= render 'questionnaire_locale_selector' %>
+
+    <span id="questionnaire-translations">
+    <%= f.fields_for :questionnaire_translations do |questionnaire_translation| %>
+        <%= render 'questionnaire_translation_fields', f: questionnaire_translation %>
+    <% end %>
+  </span>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">Ecodistrict settings</div>
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-md-6"><%= f.text_field :ecodistrict_case_id %></div>
+              <div class="col-md-6"><%= f.text_field :ecodistrict_variant_id %></div>
+              <div class="col-md-6"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <%= f.primary t('demando.admin.general.save') %>
+        <%= link_to t('demando.admin.general.cancel'), admin_questionnaires_path, class: 'btn btn-default', class: 'btn btn-default' %>
+      </div>
+    </div>
+<% end %>

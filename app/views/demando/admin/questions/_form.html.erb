@@ -1,0 +1,109 @@
+<%= bootstrap_form_for([:admin, @questionnaire, @question], html: {id: 'question-form'}) do |f| %>
+    <%= render 'questionnaire_locale_selector' %>
+
+    <% pages = pages_for_select(@questionnaire) %>
+    <% if pages.present? %>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="panel panel-default">
+              <div class="panel-heading"><%= t('demando.admin.questions.position') %></div>
+              <div class="panel-body">
+                <% unless @question.new_record? %>
+                    <div class="form-group form-inline">
+                      <div class="checkbox">
+                        <%= label_tag :reposition do %>
+                            <%= check_box_tag :reposition %> <%= t('demando.admin.questions.reposition_question') %>
+                        <% end %>
+                      </div>
+                    </div>
+                <% end %>
+                <div id="positionable" class="form-group form-inline">
+                  <%= hidden_field_tag :questionnaire_id, @questionnaire.id %>
+                  <%= hidden_field_tag :question_id, @question.id %>
+                  <%= label_tag :positionable_page_id, t('demando.admin.questions.position_question'), class: 'control-label' %>
+                  <%= select_tag :positionable_page_id, pages, class: 'form-control' %>
+                  <span class="positionable-children">
+                    <%= hidden_field_tag :positionable_type %>
+                    <%= select_tag :positionable_position, options_for_select([[t('demando.admin.general.after'), Demando::Container::POSITION_AFTER], [t('demando.admin.general.before'), Demando::Container::POSITION_BEFORE], [t('demando.admin.general.as_child_of'), Demando::Container::POSITION_AS_CHILD_OF]]), class: 'form-control' %>
+                    <%= select_tag :positionable_model_id, nil, class: 'form-control' %>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    <% end %>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="panel panel-default">
+          <div class="panel-heading"><%= t('demando.admin.questions.settings') %></div>
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-md-6"><%= f.select :demando_question_type_id, options_for_select(Demando::QuestionType.where(is_enabled: true).map { |type| [type.machine_name.humanize, type.id, data: {is_open_ended: type.is_open_ended}] }, @question.demando_question_type_id), {}, data: {previous_value: @question.demando_question_type_id.present? ? @question.demando_question_type_id : '1'} %></div>
+              <div class="col-md-6"></div>
+            </div>
+            <span id="question-translations">
+              <%= f.fields_for :question_translations do |question_translation| %>
+                  <%= render 'question_translation_fields', f: question_translation %>
+              <% end %>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">Ecodistrict settings</div>
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-md-6"><%= f.text_field :ecodistrict_property_name %></div>
+              <div class="col-md-6"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading"><%= t('demando.admin.questions.options') %></div>
+      <div class="panel-body">
+        <table class="table sortable" id="options">
+          <%= f.fields_for :options do |option| %>
+              <%= render 'option_fields', f: option %>
+          <% end %>
+        </table>
+        <%= link_to_add_association t('demando.admin.questions.add_option_button'), f, :options, class: 'btn btn-success', 'data-association-insertion-node' => '#options', 'data-association-insertion-method' => 'append' %>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading"><%= t('demando.admin.questions.validation') %></div>
+      <div class="panel-body">
+        <table class="table sortable" id="question-validators">
+          <%= f.fields_for :question_validators do |question_validator| %>
+              <%= render 'question_validator_fields', f: question_validator %>
+          <% end %>
+        </table>
+        <div class="row">
+          <div class="col-md-5">
+            <div class="input-group">
+              <%= select_tag 'validators', options_for_select(Demando::Validator.all.map { |validator| [validator.title, validator.id, data: {param0: validator.uses_param0 ? validator.param0_title : '', param1: validator.uses_param1 ? validator.param1_title : '', question_types: validator.question_types.pluck(:id).join(',')}] }), class: 'form-control' %>
+              <span class="input-group-btn">
+                <%= link_to_add_association t('demando.admin.questions.add_validator_button'), f, :question_validators, class: 'btn btn-success', 'data-association-insertion-node' => '#question-validators', 'data-association-insertion-method' => 'append' %>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <%= f.primary t('demando.admin.general.save') %>
+        <%= link_to t('demando.admin.general.cancel'), admin_questionnaire_pages_path(anchor: ("q-question-#{@question.id}" unless @question.new_record?)), class: 'btn btn-default' %>
+      </div>
+    </div>
+<% end %>

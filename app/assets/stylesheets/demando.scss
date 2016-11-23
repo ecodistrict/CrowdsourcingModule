@@ -1,0 +1,29 @@
+/*
+ *= require leaflet
+ *= require_self
+ */
+
+.building-selector {
+  height: 550px;
+  width: 100%;
+  position: relative;
+  outline: none;
+}
+
+#splash {
+  margin: 200px auto 0 auto;
+  text-align: center;
+}
+
+.footer {
+  text-align: center;
+  margin: 30px 0 0 0;
+  padding: 30px 0;
+  border-top: 1px dotted grey;
+
+  img {
+    margin: 0 10px 14px 0;
+    max-height: 40px;
+    max-width: 98px;
+  }
+}

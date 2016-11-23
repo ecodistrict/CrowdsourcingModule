@@ -1,0 +1,13 @@
+<% json_buildings = get_ecodistrict_buildings(@questionnaire.ecodistrict_case_id, @questionnaire.ecodistrict_variant_id) %>
+<% if json_buildings.present? %>
+  <% question.options.each do |option| %>
+      <div class="building-selector" id="building-selector-<%= field_id_for(question, option) %>" data-field="<%= field_id_for(question, option) %>" data-buildings="<%= json_buildings %>"></div>
+      <%= hidden_field_tag field_name_for(question, option), default_values[option.id] %>
+      <%= render_questionnaire_partial('question_errors', question.id, {errors: @page.errors[field_id_for(question, option)]}) %>
+  <% end %>
+<% else %>
+  <p class="bg-danger">An error occurred when retrieving the Ecodistrict buildings.</p>
+  <% if user_signed_in? %>
+    <p class="bg-danger">Please be sure a valid "Ecodistrict case ID" is set in the questionnaire settings.</p>
+  <% end %>
+<% end %>
